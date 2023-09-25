@@ -1,8 +1,10 @@
 ﻿namespace Server.Models;
 
-public class GaneralModel
+public abstract class GaneralModel
 {
     public Guid Guid { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime ModifiedDate { get; set; }
 }
+
+
