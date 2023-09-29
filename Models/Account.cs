@@ -13,4 +13,7 @@ public class Account : GaneralModel
     public Boolean IsUsed { get; set; }
     [Column("expired_time")]
     public DateTime ExpiredTime { get; set; }
+
+    public Employee? Employee { get; set; }
+    public AccountRole? AccountRole { get; set; }
 }

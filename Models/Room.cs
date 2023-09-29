@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using BookingApps.Models;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Server.Models;
 [Table("tb_m_rooms")]
@@ -10,4 +11,6 @@ public class Room : GaneralModel
     public int Floor { get; set; }
     [Column("capacity")]
     public int Capacity { get; set; }
+
+    public Booking? Booking { get; set; }
 }
