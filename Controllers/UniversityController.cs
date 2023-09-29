@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Server.Contracts;
 using Server.Models;
+using System;
 
 namespace Server.Controllers;
 
@@ -36,6 +38,17 @@ public class UniversityController : ControllerBase
         }
         return Ok(result);
     }
+    
+    [HttpPut]
+    public IActionResult Update(University university)
+    {
+        var result = _universityRepository.Update(university);
+        if (result is false)
+        {
+            return NotFound("Id Not Found");
+        }
+        return Ok(result);
+    }
 
     [HttpPost]
     public IActionResult Create(University university)
@@ -44,6 +57,18 @@ public class UniversityController : ControllerBase
         if (result is null)
         {
             return BadRequest("Failed to create data");
+        }
+
+        return Ok(result);
+    }
+    
+    [HttpDelete("{guid}")]
+    public IActionResult Delete(University university)
+    {
+        var result = _universityRepository.Delete(university);
+        if (result == false)
+        {
+            return BadRequest("Failed to delete data");
         }
 
         return Ok(result);
