@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Server.Contracts;
 using Server.Models;
+using Server.Repositories;
 
 namespace Server.Controllers;
 
@@ -44,6 +45,27 @@ public class RoomController : ControllerBase
         if (result is null)
         {
             return BadRequest("Failed to create data");
+        }
+
+        return Ok(result);
+    }
+    [HttpPut]
+    public IActionResult Update(Room room)
+    {
+        var result = _roomRepository.Update(room);
+        if (result is false)
+        {
+            return NotFound("Id Not Found");
+        }
+        return Ok(result);
+    }
+    [HttpDelete("{guid}")]
+    public IActionResult Delete(Room room)
+    {
+        var result = _roomRepository.Delete(room);
+        if (result == false)
+        {
+            return BadRequest("Failed to delete data");
         }
 
         return Ok(result);

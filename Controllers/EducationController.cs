@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Server.Contracts;
 using Server.Models;
+using Server.Repositories;
 
 namespace Server.Controllers;
 [ApiController]
@@ -43,6 +44,28 @@ public class EducationController : ControllerBase
         if (result is null)
         {
             return BadRequest("Failed to create data");
+        }
+
+        return Ok(result);
+    }
+
+    [HttpPut]
+    public IActionResult Update(Education education)
+    {
+        var result = _educationRepository.Update(education);
+        if (result is false)
+        {
+            return NotFound("Id Not Found");
+        }
+        return Ok(result);
+    }
+    [HttpDelete("{guid}")]
+    public IActionResult Delete(Education education)
+    {
+        var result = _educationRepository.Delete(education);
+        if (result == false)
+        {
+            return BadRequest("Failed to delete data");
         }
 
         return Ok(result);

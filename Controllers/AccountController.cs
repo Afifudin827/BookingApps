@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Server.Contracts;
 using Server.Models;
+using Server.Repositories;
 
 namespace Server.Controllers;
 
@@ -49,4 +50,26 @@ public class AccountController : ControllerBase
 
         return Ok(result);
     }
+    [HttpPut]
+    public IActionResult Update(Account account)
+    {
+        var result = _accountRepository.Update(account);
+        if (result is false)
+        {
+            return NotFound("Id Not Found");
+        }
+        return Ok(result);
+    }
+    [HttpDelete("{guid}")]
+    public IActionResult Delete(Account account)
+    {
+        var result = _accountRepository.Delete(account);
+        if (result == false)
+        {
+            return BadRequest("Failed to delete data");
+        }
+
+        return Ok(result);
+    }
+
 }

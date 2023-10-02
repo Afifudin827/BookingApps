@@ -1,6 +1,8 @@
 ﻿using BookingApps.Models;
 using Microsoft.AspNetCore.Mvc;
 using Server.Contracts;
+using Server.Models;
+using Server.Repositories;
 
 namespace Server.Controllers;
 
@@ -44,6 +46,27 @@ public class BookingController : ControllerBase
         if (result is null)
         {
             return BadRequest("Failed to create data");
+        }
+
+        return Ok(result);
+    }
+    [HttpPut]
+    public IActionResult Update(Booking booking)
+    {
+        var result = _bookingRepository.Update(booking);
+        if (result is false)
+        {
+            return NotFound("Id Not Found");
+        }
+        return Ok(result);
+    }
+    [HttpDelete("{guid}")]
+    public IActionResult Delete(Booking booking)
+    {
+        var result = _bookingRepository.Delete(booking);
+        if (result == false)
+        {
+            return BadRequest("Failed to delete data");
         }
 
         return Ok(result);

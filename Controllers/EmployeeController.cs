@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Server.Contracts;
 using Server.Models;
+using Server.Repositories;
 
 namespace Server.Controllers;
 
@@ -44,6 +45,28 @@ public class EmployeeController : ControllerBase
         if (result is null)
         {
             return BadRequest("Failed to create data");
+        }
+
+        return Ok(result);
+    }
+
+    [HttpPut]
+    public IActionResult Update(Employee employee)
+    {
+        var result = _employeeRepository.Update(employee);
+        if (result is false)
+        {
+            return NotFound("Id Not Found");
+        }
+        return Ok(result);
+    }
+    [HttpDelete("{guid}")]
+    public IActionResult Delete(Employee employee)
+    {
+        var result = _employeeRepository.Delete(employee);
+        if (result == false)
+        {
+            return BadRequest("Failed to delete data");
         }
 
         return Ok(result);

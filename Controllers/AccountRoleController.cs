@@ -1,6 +1,7 @@
 ﻿using BookingApps.Models;
 using Microsoft.AspNetCore.Mvc;
 using Server.Contracts;
+using Server.Repositories;
 
 namespace Server.Controllers;
 
@@ -44,6 +45,27 @@ public class AccountRoleController : ControllerBase
         if (result is null)
         {
             return BadRequest("Failed to create data");
+        }
+
+        return Ok(result);
+    }
+    [HttpPut]
+    public IActionResult Update(AccountRole accountRole)
+    {
+        var result = _accountRoleRepository.Update(accountRole);
+        if (result is false)
+        {
+            return NotFound("Id Not Found");
+        }
+        return Ok(result);
+    }
+    [HttpDelete("{guid}")]
+    public IActionResult Delete(AccountRole accountRole)
+    {
+        var result = _accountRoleRepository.Delete(accountRole);
+        if (result == false)
+        {
+            return BadRequest("Failed to delete data");
         }
 
         return Ok(result);
