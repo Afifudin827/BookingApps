@@ -9,11 +9,11 @@ public class Education : GaneralModel
     [Column("degree", TypeName = "nvarchar(100)")]
     public string Degree { get; set; }
     [Column("gpa")]
-    public bool GPA { get; set; }
+    public float GPA { get; set; }
     [Column("university_guid")]
     public Guid UniversityGuid { get; set; }
 
-    public University? University { get; set; }
-    public Employee? Employee { get; set; }
+    public University University { get; set; }
+    public Employee Employee { get; set; }
 
 }

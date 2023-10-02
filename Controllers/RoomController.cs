@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Server.Contracts;
+using Server.DTOs.Rooms;
+using Server.DTOs.Univesities;
 using Server.Models;
 using Server.Repositories;
 using System;
@@ -24,8 +26,8 @@ public class RoomController : ControllerBase
         {
             return NotFound("Data Not Found");
         }
-
-        return Ok(result);
+        var data = result.Select(x => (RoomDto)x);
+        return Ok(data);
     }
 
     [HttpGet("{guid}")]
@@ -36,39 +38,51 @@ public class RoomController : ControllerBase
         {
             return NotFound("Id Not Found");
         }
-        return Ok(result);
+        return Ok((RoomDto)result);
     }
 
     [HttpPost]
-    public IActionResult Create(Room room)
+    public IActionResult Create(CreatedRoomDto roomDto)
     {
-        var result = _roomRepository.Create(room);
+        var result = _roomRepository.Create(roomDto);
         if (result is null)
         {
             return BadRequest("Failed to create data");
         }
 
-        return Ok(result);
+        return Ok((RoomDto)result);
     }
     [HttpPut]
-    public IActionResult Update(Room room)
+    public IActionResult Update(RoomDto roomDto)
     {
-        var result = _roomRepository.Update(room);
-        if (result is false)
+        var entity = _roomRepository.GetByGuid(roomDto.Guid);
+        if (entity is null)
         {
             return NotFound("Id Not Found");
         }
-        return Ok(result);
+        Room toUpdate = (Room) roomDto;
+        toUpdate.CreatedDate = entity.CreatedDate;
+        var result = _roomRepository.Update(toUpdate);
+        if (result is false)
+        {
+            return NotFound("Failed Update Data");
+        }
+        return Ok("Success Update Data");
     }
     [HttpDelete("{guid}")]
     public IActionResult Delete(Guid guid)
     {
-        var result = _roomRepository.Delete(_roomRepository.GetByGuid(guid));
+        var entity = _roomRepository.GetByGuid(guid);
+        if (entity is null)
+        {
+            return NotFound("Id Not Found");
+        }
+        var result = _roomRepository.Delete(entity);
         if (result == false)
         {
             return BadRequest("Failed to delete data");
         }
 
-        return Ok(result);
+        return Ok("Success Deleted Data");
     }
 }

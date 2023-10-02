@@ -1,8 +1,10 @@
 ﻿using BookingApps.Models;
 using Microsoft.AspNetCore.Mvc;
 using Server.Contracts;
+using Server.DTOs.Bookings;
 using Server.Models;
 using Server.Repositories;
+using System;
 
 namespace Server.Controllers;
 
@@ -24,8 +26,8 @@ public class BookingController : ControllerBase
         {
             return NotFound("Data Not Found");
         }
-
-        return Ok(result);
+        var data = result.Select(x => (BookingDto)x);
+        return Ok(data);
     }
 
     [HttpGet("{guid}")]
@@ -36,39 +38,52 @@ public class BookingController : ControllerBase
         {
             return NotFound("Id Not Found");
         }
-        return Ok(result);
+        return Ok((BookingDto)result);
     }
 
     [HttpPost]
-    public IActionResult Create(Booking booking)
+    public IActionResult Create(CreateBookingDto bookingDto)
     {
-        var result = _bookingRepository.Create(booking);
+        var result = _bookingRepository.Create(bookingDto);
         if (result is null)
         {
             return BadRequest("Failed to create data");
         }
 
-        return Ok(result);
+        return Ok("Success Add Data");
     }
     [HttpPut]
-    public IActionResult Update(Booking booking)
+    public IActionResult Update(BookingDto bookingDto)
     {
-        var result = _bookingRepository.Update(booking);
-        if (result is false)
+        var cek = _bookingRepository.GetByGuid(bookingDto.Guid);
+        if (cek is null)
         {
             return NotFound("Id Not Found");
         }
-        return Ok(result);
+        var update = (Booking)cek;
+        update.CreatedDate = cek.CreatedDate;
+        var result = _bookingRepository.Update(update);
+        if (result is false)
+        {
+            return NotFound("Data failed To Update");
+        }
+        return Ok("Data Success Updated");
     }
     [HttpDelete("{guid}")]
     public IActionResult Delete(Guid guid)
     {
-        var result = _bookingRepository.Delete(_bookingRepository.GetByGuid(guid));
+        var cek = _bookingRepository.GetByGuid(guid);
+        if (cek is null)
+        {
+            return NotFound("Id Not Found");
+        }
+
+        var result = _bookingRepository.Delete(cek);
         if (result == false)
         {
             return BadRequest("Failed to delete data");
         }
 
-        return Ok(result);
+        return Ok("Success Deleted data");
     }
 }

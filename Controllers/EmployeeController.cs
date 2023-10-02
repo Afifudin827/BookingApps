@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Server.Contracts;
+using Server.DTOs.Employees;
 using Server.Models;
 using Server.Repositories;
+using System;
 
 namespace Server.Controllers;
 
@@ -23,8 +25,8 @@ public class EmployeeController : ControllerBase
         {
             return NotFound("Data Not Found");
         }
-
-        return Ok(result);
+        var data = result.Select(c => (EmployeeDto)c);
+        return Ok(data);
     }
 
     [HttpGet("{guid}")]
@@ -35,40 +37,52 @@ public class EmployeeController : ControllerBase
         {
             return NotFound("Id Not Found");
         }
-        return Ok(result);
+        return Ok((EmployeeDto)result);
     }
 
     [HttpPost]
-    public IActionResult Create(Employee employee)
+    public IActionResult Create(CreatedEmployeeDto employeeDto)
     {
-        var result = _employeeRepository.Create(employee);
+        var result = _employeeRepository.Create(employeeDto);
         if (result is null)
         {
             return BadRequest("Failed to create data");
         }
 
-        return Ok(result);
+        return Ok((EmployeeDto)result);
     }
 
     [HttpPut]
-    public IActionResult Update(Employee employee)
+    public IActionResult Update(EmployeeDto employeeDto)
     {
-        var result = _employeeRepository.Update(employee);
-        if (result is false)
+        var cek = _employeeRepository.GetByGuid(employeeDto.Guid);
+        if (cek is null)
         {
             return NotFound("Id Not Found");
         }
-        return Ok(result);
+        Employee update = (EmployeeDto) cek;
+        update.CreatedDate = cek.CreatedDate;
+        var result = _employeeRepository.Update(update);
+        if (result is false)
+        {
+            return NotFound("Update Failed");
+        }
+        return Ok("Update Success");
     }
     [HttpDelete("{guid}")]
     public IActionResult Delete(Guid guid)
     {
-        var result = _employeeRepository.Delete(_employeeRepository.GetByGuid(guid));
+        var cek = _employeeRepository.GetByGuid(guid);
+        if (cek is null)
+        {
+            return NotFound("Id Not Found");
+        }
+        var result = _employeeRepository.Delete((EmployeeDto)cek);
         if (result == false)
         {
             return BadRequest("Failed to delete data");
         }
 
-        return Ok(result);
+        return Ok("Deleted Success");
     }
 }
