@@ -23,13 +23,13 @@ public class EmployeeRepository : IEmployeeRepository
         return _context.Set<Employee>().Find(guid);
     }
 
-    public Employee? Create(Employee education)
+    public Employee? Create(Employee employee)
     {
         try
         {
-            _context.Set<Employee>().Add(education);
+            _context.Set<Employee>().Add(employee);
             _context.SaveChanges();
-            return education;
+            return employee;
         }
         catch
         {
@@ -37,11 +37,11 @@ public class EmployeeRepository : IEmployeeRepository
         }
     }
 
-    public bool Update(Employee education)
+    public bool Update(Employee employee)
     {
         try
         {
-            _context.Set<Employee>().Update(education);
+            _context.Set<Employee>().Update(employee);
             _context.SaveChanges();
             return true;
         }
@@ -51,11 +51,11 @@ public class EmployeeRepository : IEmployeeRepository
         }
     }
 
-    public bool Delete(Employee education)
+    public bool Delete(Employee employee)
     {
         try
         {
-            _context.Set<Employee>().Remove(education);
+            _context.Set<Employee>().Remove(employee);
             _context.SaveChanges();
             return true;
         }

@@ -61,9 +61,9 @@ public class AccountController : ControllerBase
         return Ok(result);
     }
     [HttpDelete("{guid}")]
-    public IActionResult Delete(Account account)
+    public IActionResult Delete(Guid guid)
     {
-        var result = _accountRepository.Delete(account);
+        var result = _accountRepository.Delete(_accountRepository.GetByGuid(guid));
         if (result == false)
         {
             return BadRequest("Failed to delete data");

@@ -61,9 +61,9 @@ public class EmployeeController : ControllerBase
         return Ok(result);
     }
     [HttpDelete("{guid}")]
-    public IActionResult Delete(Employee employee)
+    public IActionResult Delete(Guid guid)
     {
-        var result = _employeeRepository.Delete(employee);
+        var result = _employeeRepository.Delete(_employeeRepository.GetByGuid(guid));
         if (result == false)
         {
             return BadRequest("Failed to delete data");

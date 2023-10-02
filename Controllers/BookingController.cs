@@ -61,9 +61,9 @@ public class BookingController : ControllerBase
         return Ok(result);
     }
     [HttpDelete("{guid}")]
-    public IActionResult Delete(Booking booking)
+    public IActionResult Delete(Guid guid)
     {
-        var result = _bookingRepository.Delete(booking);
+        var result = _bookingRepository.Delete(_bookingRepository.GetByGuid(guid));
         if (result == false)
         {
             return BadRequest("Failed to delete data");

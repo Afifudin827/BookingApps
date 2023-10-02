@@ -60,9 +60,9 @@ public class AccountRoleController : ControllerBase
         return Ok(result);
     }
     [HttpDelete("{guid}")]
-    public IActionResult Delete(AccountRole accountRole)
+    public IActionResult Delete(Guid guid)
     {
-        var result = _accountRoleRepository.Delete(accountRole);
+        var result = _accountRoleRepository.Delete(_accountRoleRepository.GetByGuid(guid));
         if (result == false)
         {
             return BadRequest("Failed to delete data");

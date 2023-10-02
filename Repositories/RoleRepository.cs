@@ -23,13 +23,13 @@ public class RoleRepository : IRoleRepository
         return _context.Set<Role>().Find(guid);
     }
 
-    public Role? Create(Role education)
+    public Role? Create(Role role)
     {
         try
         {
-            _context.Set<Role>().Add(education);
+            _context.Set<Role>().Add(role);
             _context.SaveChanges();
-            return education;
+            return role;
         }
         catch
         {
@@ -37,11 +37,11 @@ public class RoleRepository : IRoleRepository
         }
     }
 
-    public bool Update(Role education)
+    public bool Update(Role role)
     {
         try
         {
-            _context.Set<Role>().Update(education);
+            _context.Set<Role>().Update(role);
             _context.SaveChanges();
             return true;
         }
@@ -51,11 +51,11 @@ public class RoleRepository : IRoleRepository
         }
     }
 
-    public bool Delete(Role education)
+    public bool Delete(Role role)
     {
         try
         {
-            _context.Set<Role>().Remove(education);
+            _context.Set<Role>().Remove(role);
             _context.SaveChanges();
             return true;
         }

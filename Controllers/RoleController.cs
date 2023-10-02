@@ -61,9 +61,9 @@ public class RoleController : ControllerBase
         return Ok(result);
     }
     [HttpDelete("{guid}")]
-    public IActionResult Delete(Role role)
+    public IActionResult Delete(Guid guid)
     {
-        var result = _roleRepository.Delete(role);
+        var result = _roleRepository.Delete(_roleRepository.GetByGuid(guid));
         if (result == false)
         {
             return BadRequest("Failed to delete data");

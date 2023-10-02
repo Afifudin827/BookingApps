@@ -63,9 +63,9 @@ public class UniversityController : ControllerBase
     }
     
     [HttpDelete("{guid}")]
-    public IActionResult Delete(University university)
+    public IActionResult Delete(Guid guid)
     {
-        var result = _universityRepository.Delete(university);
+        var result = _universityRepository.Delete(_universityRepository.GetByGuid(guid));
         if (result == false)
         {
             return BadRequest("Failed to delete data");

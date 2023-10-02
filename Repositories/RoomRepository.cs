@@ -23,13 +23,13 @@ public class RoomRepository : IRoomRepository
         return _context.Set<Room>().Find(guid);
     }
 
-    public Room? Create(Room education)
+    public Room? Create(Room room)
     {
         try
         {
-            _context.Set<Room>().Add(education);
+            _context.Set<Room>().Add(room);
             _context.SaveChanges();
-            return education;
+            return room;
         }
         catch
         {
@@ -37,11 +37,11 @@ public class RoomRepository : IRoomRepository
         }
     }
 
-    public bool Update(Room education)
+    public bool Update(Room room)
     {
         try
         {
-            _context.Set<Room>().Update(education);
+            _context.Set<Room>().Update(room);
             _context.SaveChanges();
             return true;
         }
@@ -51,11 +51,11 @@ public class RoomRepository : IRoomRepository
         }
     }
 
-    public bool Delete(Room education)
+    public bool Delete(Room room)
     {
         try
         {
-            _context.Set<Room>().Remove(education);
+            _context.Set<Room>().Remove(room);
             _context.SaveChanges();
             return true;
         }

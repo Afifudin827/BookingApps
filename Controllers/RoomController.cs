@@ -2,6 +2,7 @@
 using Server.Contracts;
 using Server.Models;
 using Server.Repositories;
+using System;
 
 namespace Server.Controllers;
 
@@ -60,9 +61,9 @@ public class RoomController : ControllerBase
         return Ok(result);
     }
     [HttpDelete("{guid}")]
-    public IActionResult Delete(Room room)
+    public IActionResult Delete(Guid guid)
     {
-        var result = _roomRepository.Delete(room);
+        var result = _roomRepository.Delete(_roomRepository.GetByGuid(guid));
         if (result == false)
         {
             return BadRequest("Failed to delete data");

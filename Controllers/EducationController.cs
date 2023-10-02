@@ -60,9 +60,9 @@ public class EducationController : ControllerBase
         return Ok(result);
     }
     [HttpDelete("{guid}")]
-    public IActionResult Delete(Education education)
+    public IActionResult Delete(Guid guid)
     {
-        var result = _educationRepository.Delete(education);
+        var result = _educationRepository.Delete(_educationRepository.GetByGuid(guid));
         if (result == false)
         {
             return BadRequest("Failed to delete data");
