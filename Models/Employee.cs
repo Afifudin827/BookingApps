@@ -27,6 +27,11 @@ public class Employee : GaneralModel
     public Education? Education { get; set; }
     public Account? Account { get; set; }
     public ICollection<Booking>? Booking { get; set; }
-
+    /*
+     * Kemudian pada model Employee memiliki beberapa atribit di antaranya 
+     * Nik, FirstName, LastName, BirthDate, Gander, HiringDate, Email, PhoneNumber dan 
+     * karena inheriten dengan ganeralModel maka dia akan memiliki atribut generalModel juga. 
+     * Untuk Education, Account dan Booking nantinya di gunakan untuk relasi antar table.
+     */
 
 }

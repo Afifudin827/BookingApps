@@ -22,3 +22,10 @@ public class Booking : GaneralModel
     public Employee? Employee { get; set; }
     public Room? Room { get; set; } 
 }
+
+/*
+ * Pada bagin model Booking terdapat beberapa atribut diantaranya 
+ * StartDate, EndDate, Status, Remarks, RoomGuid, EmployeeGuid dan 
+ * karena inheriten dengan ganeralModel maka dia akan memiliki atribut generalModel juga. 
+ * Kemudian ada Employee dan Room yang nantinya berfungsi untuk menjadi jembatan untuk relasi antar table.
+ */

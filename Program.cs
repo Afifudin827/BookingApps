@@ -7,6 +7,10 @@ using Server.Repositories;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+/*
+ * Kemudian pada bagian program menambahkan scoped untuk setiap Interface table dan 
+ * repository agar nantinya dapat mengelola data yang ada pada table.
+ */
 builder.Services.AddScoped<IUniversityRepository, UniversityRepository>();
 builder.Services.AddScoped<IEducationRepository, EducationRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
@@ -17,6 +21,10 @@ builder.Services.AddScoped<IAccountRoleRepository, AccountRoleRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 
 
+/*
+ * Pada bagian code program akan dibuat connection kedalam database dengan menggunakan code 
+ * builder.Configuration.GetConnectionString("DefaultConnection"), dengan menambahkan Context dari class BookingManagementDbContext.
+ */
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<BookingManagementDbContext>(Options => Options.UseSqlServer(connectionString));
 

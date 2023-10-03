@@ -6,6 +6,9 @@ namespace Server.Repositories;
 
 public class RoleRepository : GaneralRepository<Role>, IRoleRepository
 {
-    public RoleRepository(BookingManagementDbContext context) : base(context) { }
+    public RoleRepository(BookingManagementDbContext context) : base(context) {
+        //karena kita sudah membuat general class repository jadi kita hanya perlu melakukan pewarisan ke setiap repository class yang lainnya.
+    }
 
 }
+    

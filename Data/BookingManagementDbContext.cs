@@ -6,22 +6,40 @@ namespace Server.Data;
 
 public class BookingManagementDbContext : DbContext
 {
-    public BookingManagementDbContext(DbContextOptions<BookingManagementDbContext> options) : base(options){}
+    /*
+     * Didalam class BookingManagementDbContext kita melakukan db set yang nantinya akan membuat database pada sqlServer, 
+     * pada code ini akan membuat sebuah tabel database di antaranya 
+     * Account, AccountRole, Role, Employee, Booking, Room, Univercity dan Education. 
+     * 
+     */
+    public BookingManagementDbContext(DbContextOptions<BookingManagementDbContext> options) : base(options) { }
     public DbSet<Account> Accounts { get; set; }
     public DbSet<Booking> Bookings { get; set; }
     public DbSet<AccountRole> AccouRoles { get; set; }
-    public DbSet<Education> Educations { get; set; }    
+    public DbSet<Education> Educations { get; set; }
     public DbSet<Employee> Employees { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<Room> Rooms { get; set; }
-    public DbSet <University> Universities { get; set; }
+    public DbSet<University> Universities { get; set; }
 
+    /*
+     * Pada code ini juga akan membuat pengaturan relasi antar table di antaranya 
+         * Univercity yang akan berelasi dengan Education melalui UnivercityGuid,
+         * Education yang akan berelasi dengan Employee dengan menggunakan Guid Mereka, 
+         * Account yang akan berelasi dengan employee dengan menggunaakn Guid, 
+         * Role yang akan berelasi dengan AccountRole dengan RoleGuid, 
+         * Booking yang akan berelasi dengan employee dengan EmployeeGuid dan 
+         * Booking juga yang akan berelasi dengan room dengan menggunakan RoomGuid.D
+     */
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        //Data Atribut yang memiliki data unique
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<Employee>().HasIndex(e => new
         {
-            e.NIK, e.Email, e.PhoneNumber 
+            e.NIK,
+            e.Email,
+            e.PhoneNumber
         }).IsUnique();
 
         modelBuilder.Entity<University>()
@@ -44,7 +62,7 @@ public class BookingManagementDbContext : DbContext
                     .HasOne(ar => ar.Account)
                     .WithOne(a => a.AccountRole)
                     .HasForeignKey<AccountRole>(ar => ar.AccountGuid);
-        
+
         modelBuilder.Entity<Role>()
                     .HasMany(ar => ar.AccountRole)
                     .WithOne(r => r.Role)

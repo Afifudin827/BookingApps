@@ -10,4 +10,10 @@ public class University : GaneralModel
     public string Name { get; set; }
 
     public ICollection<Education>? Educations { get; set; }
+    /*
+     * Pada model class Universities terdapat beberapa atribut di antaranya 
+     * Code, name dan 
+     * karena inheriten dengan ganeralModel maka dia akan memiliki atribut generalModel juga. 
+     * Education digunakan untuk relasi antar table.
+     */
 }

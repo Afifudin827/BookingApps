@@ -13,4 +13,11 @@ public class Room : GaneralModel
     public int Capacity { get; set; }
 
     public Booking? Booking { get; set; }
+
+    /*
+     * Pada model room memiliki beberapa atribut di antaranya 
+     * Name, Floor, Capacity dan 
+     * karena inheriten dengan ganeralModel maka dia akan memiliki atribut generalModel juga. 
+     * Dan Booking nantinya akan di gunakan sebagai relasi antar table.
+     */
 }

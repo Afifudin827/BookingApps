@@ -1,6 +1,10 @@
 ﻿using Server.Models;
 using System.ComponentModel.DataAnnotations.Schema;
 
+
+/*
+ * 
+ */
 namespace BookingApps.Models;
 [Table("tb_m_accounts")]
 public class Account : GaneralModel
@@ -17,3 +21,9 @@ public class Account : GaneralModel
     public Employee? Employee { get; set; }
     public AccountRole? AccountRole { get; set; }
 }
+/*
+ * Pada bagian model account akan memiliki beberapa atribut di antaranya 
+ * password, otp, IsUsed, ExpiredTime dan 
+ * karena inheriten dengan ganeralModel maka dia akan memiliki atribut generalModel juga. 
+ * Code employee dan accountRole berfungsi sebagai jembatan relasi antar tabel.
+ */

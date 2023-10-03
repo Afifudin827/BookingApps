@@ -10,7 +10,11 @@ public class GaneralRepository <TEntity> : IGaneralRepository<TEntity> where TEn
     {
         _context = context;
     }
-
+    /*
+     * Pada bagian Repositorynya juga akan di buat sebuah 
+     * class general yang nantinya akan digunakan pada 
+     * setiap repository class lainnya karena memiliki fitur yang sama yaitu CRUD.
+     */
     public IEnumerable<TEntity> GetAll()
     {
         return _context.Set<TEntity>().ToList();
@@ -64,4 +68,4 @@ public class GaneralRepository <TEntity> : IGaneralRepository<TEntity> where TEn
             return false;
         }
     }
-}
+}   

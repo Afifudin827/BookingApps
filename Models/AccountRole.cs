@@ -13,3 +13,10 @@ public class AccountRole : GaneralModel
     public Account? Account { get; set; }
     public Role? Role { get; set; }
 }
+
+/*
+ * Pada bagian model AccountRole memiliki atribut 
+ * AccountGuid, RoleGuid dan 
+ * karena inheriten dengan ganeralModel maka dia akan memiliki atribut generalModel juga. 
+ * Kemudian ada Account dan Role yang nantinya digunakan untuk merelasikan antar table tersebut.
+ */

@@ -16,4 +16,11 @@ public class Education : GaneralModel
     public University University { get; set; }
     public Employee Employee { get; set; }
 
+    /*
+ * Pada bagian model ini memiliki membuat sebuah atribut 
+ * Major, Degree, GPA UniversityGuid dan 
+ * karena inheriten dengan ganeralModel maka dia akan memiliki atribut generalModel juga. 
+ * Untuk University dan Employee nantinya akan digunakan sebagai jembatan relasi antar table.
+ */
+
 }

@@ -4,7 +4,9 @@ using Server.Contracts;
 using Server.DTOs.Bookings;
 using Server.Models;
 using Server.Repositories;
+using Server.Utilities.Handler;
 using System;
+using System.Net;
 
 namespace Server.Controllers;
 
@@ -17,73 +19,135 @@ public class BookingController : ControllerBase
     {
         _bookingRepository = bookingRepository;
     }
-
+    /*
+     * Pada class Controller memiliki function untuk get all data 
+     * yang ada dengan melakukan penarikan data berdasarkan atribut yang ada pada calss DTO dengan operator Explicit.
+     */
     [HttpGet]
     public IActionResult GetAll()
     {
         var result = _bookingRepository.GetAll();
         if (!result.Any())
         {
-            return NotFound("Data Not Found");
+            return NotFound(new ResponseErrorHandler
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Data Not Found"
+            });
         }
         var data = result.Select(x => (BookingDto)x);
-        return Ok(data);
+        return Ok(new ResponseOKHandler<IEnumerable<BookingDto>>( data));
     }
-
+    /*
+     * function untuk get datanya berdsarkan Guid yang nantinya data tersebut di tampilkan sesuai atribut yang ada di class Dto.
+     */
     [HttpGet("{guid}")]
     public IActionResult GetByGuid(Guid guid)
     {
         var result = _bookingRepository.GetByGuid(guid);
         if (result is null)
         {
-            return NotFound("Id Not Found");
+            return NotFound(new ResponseErrorHandler
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Data Not Found"
+            });
         }
-        return Ok((BookingDto)result);
+        return Ok(new ResponseOKHandler<BookingDto>((BookingDto)result));
     }
-
+    /*
+     * bagian post akan membuat data baru dengan memanfaatkan class Dto 
+     * sehingga data yang di perlukan saat input akan di batasi sesuai keperluanya.
+     */
     [HttpPost]
     public IActionResult Create(CreateBookingDto bookingDto)
     {
-        var result = _bookingRepository.Create(bookingDto);
-        if (result is null)
+        try
         {
-            return BadRequest("Failed to create data");
+            var result = _bookingRepository.Create(bookingDto);
+            return Ok(new ResponseOKHandler<BookingDto>((BookingDto)result));
         }
-
-        return Ok("Success Add Data");
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new ResponseErrorHandler
+            {
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Failed to Created data",
+                Error = ex.Message
+            });
+        }
+        
     }
+    /*
+     * Pada bagian updatenya memiliki parameter class DTO yang nantinya data yang masuk 
+     * akan di tampung terlebih dahulu ke class DTO dan kemudian data yang di dapat berdasarkan 
+     * pencarin Guid akan di tampung kedalam class Model yang di Explicitkan dan 
+     * memasukan data hasil pencarian createdDate kedalam model update agar data created tidak berubah. 
+     * Lalu data akan masuk kedalam function yang tersedia pada interface update sesuai isi dari variable update yang telah di masukan.
+     */
     [HttpPut]
     public IActionResult Update(BookingDto bookingDto)
     {
-        var cek = _bookingRepository.GetByGuid(bookingDto.Guid);
-        if (cek is null)
+        try
         {
-            return NotFound("Id Not Found");
+            var cek = _bookingRepository.GetByGuid(bookingDto.Guid);
+            if (cek is null)
+            {
+                return NotFound(new ResponseErrorHandler
+                {
+                    Code = StatusCodes.Status404NotFound,
+                    Status = HttpStatusCode.NotFound.ToString(),
+                    Message = "Data Not Found"
+                });
+            }
+            var update = (Booking)cek;
+            update.CreatedDate = cek.CreatedDate;
+            var result = _bookingRepository.Update(update);
+            return Ok(new ResponseOKHandler<string>("Data Success Updated"));
         }
-        var update = (Booking)cek;
-        update.CreatedDate = cek.CreatedDate;
-        var result = _bookingRepository.Update(update);
-        if (result is false)
+        catch (Exception ex)
         {
-            return NotFound("Data failed To Update");
+            return StatusCode(StatusCodes.Status500InternalServerError, new ResponseErrorHandler
+            {
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Failed to Updated data",
+                Error = ex.Message
+            });
         }
-        return Ok("Data Success Updated");
     }
+    ////Pada bagian delete dia memelukan Guid saja untuk melakukan penghapusan data.
     [HttpDelete("{guid}")]
     public IActionResult Delete(Guid guid)
     {
-        var cek = _bookingRepository.GetByGuid(guid);
-        if (cek is null)
+        try
         {
-            return NotFound("Id Not Found");
+            var cek = _bookingRepository.GetByGuid(guid);
+            if (cek is null)
+            {
+                return NotFound(new ResponseErrorHandler
+                {
+                    Code = StatusCodes.Status404NotFound,
+                    Status = HttpStatusCode.NotFound.ToString(),
+                    Message = "Data Not Found"
+                });
+            }
+            var result = _bookingRepository.Delete(cek);
+            return Ok(new ResponseOKHandler<string>("Success Deleted data"));
         }
-
-        var result = _bookingRepository.Delete(cek);
-        if (result == false)
+        catch (Exception ex)
         {
-            return BadRequest("Failed to delete data");
+            return StatusCode(StatusCodes.Status500InternalServerError, new ResponseErrorHandler
+            {
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Failed to Deleted data",
+                Error = ex.Message
+            });
         }
-
-        return Ok("Success Deleted data");
+        
     }
 }

@@ -13,4 +13,10 @@ public abstract class GaneralModel
     public DateTime ModifiedDate { get; set; }
 }
 
+/*
+ * Kemudian pembuatan bagian model, code diatas merupakan sebuah class ganeralModel 
+ * yang nantinya akan dipakai sesuai dengan table yang membutuhkan data yang sama. 
+ * Yaitu Guid, Created_date, modified_date.
+ */
+
 

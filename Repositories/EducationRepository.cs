@@ -8,6 +8,7 @@ public class EducationRepository : GaneralRepository<Education>, IEducationRepos
 
     public EducationRepository(BookingManagementDbContext context) : base(context)
     {
+        //karena kita sudah membuat general class repository jadi kita hanya perlu melakukan pewarisan ke setiap repository class yang lainnya.
     }
 
 }

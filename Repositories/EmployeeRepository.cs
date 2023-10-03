@@ -6,6 +6,8 @@ namespace Server.Repositories;
 
 public class EmployeeRepository : GaneralRepository<Employee>, IEmployeeRepository
 {
-    public EmployeeRepository(BookingManagementDbContext context): base(context) { }
+    public EmployeeRepository(BookingManagementDbContext context): base(context) {
+        //karena kita sudah membuat general class repository jadi kita hanya perlu melakukan pewarisan ke setiap repository class yang lainnya.
+    }
 
 }
