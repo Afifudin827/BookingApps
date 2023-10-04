@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.Data;
 
@@ -11,9 +12,10 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(BookingManagementDbContext))]
-    partial class BookingManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231004021524_addEducation")]
+    partial class addEducation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -233,13 +235,7 @@ namespace Server.Migrations
 
                     b.HasKey("Guid");
 
-                    b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.HasIndex("NIK")
-                        .IsUnique();
-
-                    b.HasIndex("PhoneNumber")
+                    b.HasIndex("NIK", "Email", "PhoneNumber")
                         .IsUnique();
 
                     b.ToTable("tb_m_employees");

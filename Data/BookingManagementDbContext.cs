@@ -37,8 +37,14 @@ public class BookingManagementDbContext : DbContext
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<Employee>().HasIndex(e => new
         {
-            e.NIK,
-            e.Email,
+            e.NIK
+        }).IsUnique();
+        modelBuilder.Entity<Employee>().HasIndex(e => new
+        {
+            e.Email 
+        }).IsUnique();
+        modelBuilder.Entity<Employee>().HasIndex(e => new
+        {
             e.PhoneNumber
         }).IsUnique();
 

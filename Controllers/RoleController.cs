@@ -144,7 +144,7 @@ public class RoleController : ControllerBase
             {
                 Code = StatusCodes.Status500InternalServerError,
                 Status = HttpStatusCode.InternalServerError.ToString(),
-                Message = "Failed to Update data",
+                Message = "Failed to Deleted data",
                 Error = ex.Message
             });
         }
