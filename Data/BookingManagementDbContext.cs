@@ -39,10 +39,12 @@ public class BookingManagementDbContext : DbContext
         {
             e.NIK
         }).IsUnique();
+
         modelBuilder.Entity<Employee>().HasIndex(e => new
         {
-            e.Email 
+            e.Email
         }).IsUnique();
+
         modelBuilder.Entity<Employee>().HasIndex(e => new
         {
             e.PhoneNumber

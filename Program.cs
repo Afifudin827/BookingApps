@@ -1,8 +1,13 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Server.Contracts;
 using Server.Data;
 using Server.Repositories;
+using Server.Utilities.Handler;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +25,22 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IAccountRoleRepository, AccountRoleRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 
+builder.Services.AddFluentValidationAutoValidation()
+    .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
+builder.Services.AddControllers()
+       .ConfigureApiBehaviorOptions(options =>
+       {
+           // Custom validation response
+           options.InvalidModelStateResponseFactory = context =>
+           {
+               var errors = context.ModelState.Values
+                                   .SelectMany(v => v.Errors)
+                                   .Select(v => v.ErrorMessage);
+
+               return new BadRequestObjectResult(new ResponseValidatorHandler(errors));
+           };
+       });
 
 /*
  * Pada bagian code program akan dibuat connection kedalam database dengan menggunakan code 

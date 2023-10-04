@@ -65,7 +65,9 @@ public class EmployeeController : ControllerBase
     {
         try
         {
-            var result = _employeeRepository.Create(employeeDto);
+            Employee toCreate = employeeDto;
+            toCreate.NIK = GenerateHandler.Nik(_employeeRepository.GetLastNik());
+            var result = _employeeRepository.Create(toCreate);
             return Ok(new ResponseOKHandler<EmployeeDto>((EmployeeDto)result));
         }
         catch (Exception ex)

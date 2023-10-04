@@ -1,11 +1,12 @@
 ﻿using Server.Contracts;
 using Server.Data;
+using Server.Utilities.Handler;
 
 namespace Server.Repositories;
 
 public class GaneralRepository <TEntity> : IGaneralRepository<TEntity> where TEntity : class
 {
-    private readonly BookingManagementDbContext _context;
+    protected readonly BookingManagementDbContext _context;
     protected GaneralRepository(BookingManagementDbContext context)
     {
         _context = context;
@@ -35,9 +36,21 @@ public class GaneralRepository <TEntity> : IGaneralRepository<TEntity> where TEn
             _context.SaveChanges();
             return entity;
         }
-        catch
+        catch (Exception ex)
         {
-            return null;
+            if (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_tb_m_employees_nik"))
+            {
+                throw new ExceptionHandler("NIK already exists");
+            }
+            if (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_tb_m_employees_email"))
+            {
+                throw new ExceptionHandler("Email already exists");
+            }
+            if (ex.InnerException != null && ex.InnerException.Message.Contains("IX_tb_m_employees_phone_number"))
+            {
+                throw new ExceptionHandler("Phone number already exists");
+            }
+            throw new ExceptionHandler(ex.InnerException?.Message ?? ex.Message);
         }
     }
 
@@ -49,9 +62,9 @@ public class GaneralRepository <TEntity> : IGaneralRepository<TEntity> where TEn
             _context.SaveChanges();
             return true;
         }
-        catch
+        catch (Exception ex)
         {
-            return false;
+            throw new ExceptionHandler(ex.InnerException?.Message ?? ex.Message);
         }
     }
 
@@ -63,9 +76,9 @@ public class GaneralRepository <TEntity> : IGaneralRepository<TEntity> where TEn
             _context.SaveChanges();
             return true;
         }
-        catch
+        catch (Exception ex)
         {
-            return false;
+            throw new ExceptionHandler(ex.InnerException?.Message ?? ex.Message);
         }
     }
 }   

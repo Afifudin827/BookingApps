@@ -5,17 +5,15 @@ namespace Server.Utilities.Handler;
 
 public class GenerateHandler
 {
-    public static string NikGenerate(IEnumerable<Employee> employee)
+    public static string Nik(string? lastNik = null)
     {
-        int i = 111111;
-        foreach (var item in employee)
+        if (lastNik is null)
         {
-            if(int.TryParse(item.NIK, out i))
-            {
-                return i.ToString();
-            }
-
+            return "111111";
         }
-        return "111111";
+
+        var generateNik = Convert.ToInt32(lastNik) + 1;
+
+        return generateNik.ToString();
     }
 }

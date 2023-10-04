@@ -5,7 +5,6 @@ namespace Server.DTOs.Employees;
 
 public class CreatedEmployeeDto
 {
-    public string NIK { get; set; }
     public string FirstName { get; set; }
     public string? LastName { get; set; }
     public DateTime BirthDate { get; set; }
@@ -18,7 +17,6 @@ public class CreatedEmployeeDto
     {
         return new Employee
         {
-            NIK = employeeDto.NIK,
             FirstName = employeeDto.FirstName,
             LastName = employeeDto.LastName,
             BirthDate = employeeDto.BirthDate,
