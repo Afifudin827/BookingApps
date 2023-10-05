@@ -14,9 +14,53 @@ namespace Server.Controllers;
 public class EmployeeController : ControllerBase
 {
     private readonly IEmployeeRepository _employeeRepository;
-    public EmployeeController(IEmployeeRepository employeeRepository)
+    private readonly IEducationRepository _educationRepository;
+    private readonly IUniversityRepository _universityRepository;
+    
+    public EmployeeController(IEmployeeRepository employeeRepository, IEducationRepository educationRepository, IUniversityRepository universityRepository)
     {
         _employeeRepository = employeeRepository;
+        _educationRepository = educationRepository;
+        _universityRepository = universityRepository;
+    }
+
+    [HttpGet("Detail")]
+    public IActionResult GetDetail()
+    {
+        var employee = _employeeRepository.GetAll();
+        var education = _educationRepository.GetAll();
+        var univercity = _universityRepository.GetAll();
+
+        if(!(employee.Any() && education.Any() && univercity.Any()))
+        {
+            return NotFound(new ResponseErrorHandler
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Data Not Found"
+            });
+        }
+
+        var result = from emp in employee
+                     join edu in education on emp.Guid equals edu.Guid
+                     join uni in univercity on edu.UniversityGuid equals uni.Guid
+                     select new EmployeeDetailDto {
+                     Guid = emp.Guid,
+                     Nik = emp.NIK,
+                     FullName = string.Concat(emp.FirstName," ", emp.LastName),
+                     BirthDate = emp.BirthDate,
+                     Gender = emp.Gender.ToString(),
+                     HiringDate = emp.HiringDate,
+                     Email = emp.Email,
+                     PhoneNumber = emp.PhoneNumber,
+                     major = edu.Major,
+                     degree = edu.Degree,
+                     gpa = edu.GPA,
+                     Univercity = uni.Name
+                     };
+
+        return Ok(new ResponseOKHandler<IEnumerable<EmployeeDetailDto>>(result));
+
     }
     /*
      * Pada class Controller memiliki function untuk get all data 

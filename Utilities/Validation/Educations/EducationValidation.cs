@@ -24,7 +24,7 @@ public class EducationValidation : AbstractValidator<EducationDto>
         //harus memiliki data dan tidak boleh kecil dari 0 dan lebih besar 4
         RuleFor(x => x.gpa)
             .NotEmpty()
-            .GreaterThanOrEqualTo(0).LessThanOrEqualTo(4)
+            .InclusiveBetween(0, 4)
             .WithMessage("Your Input was Incorrect");
         //harus memiliki guid Univercity
         RuleFor(x => x.university_guid)

@@ -2,6 +2,7 @@
 using Server.Contracts;
 using Server.Data;
 using Server.Models;
+using System;
 
 namespace Server.Repositories;
 
@@ -14,6 +15,13 @@ public class EmployeeRepository : GaneralRepository<Employee>, IEmployeeReposito
     public string? GetLastNik()
     {
         return _context.Set<Employee>().OrderBy(e => e.NIK).LastOrDefault()?.NIK;
+    }
+
+    public Employee GetByEmail(string email)
+    {
+        var entity = _context.Set<Employee>().FirstOrDefault(e => e.Email == email);
+        _context.ChangeTracker.Clear();
+        return entity;
     }
         
 }

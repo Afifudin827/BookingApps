@@ -10,7 +10,7 @@ public class HashHandler
     {
         return BCrypt.Net.BCrypt.HashPassword(password, getRandomSlat());
     }
-    private static bool VarifPassword(string password, string hashPassword)
+    public static bool VarifPassword(string password, string hashPassword)
     {
         return BCrypt.Net.BCrypt.Verify(password, hashPassword);
     }
