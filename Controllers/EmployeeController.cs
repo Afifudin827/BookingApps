@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Server.Contracts;
 using Server.DTOs.Employees;
 using Server.Models;
@@ -10,6 +11,7 @@ using System.Net;
 namespace Server.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("server/[controller]")]
 public class EmployeeController : ControllerBase
 {
@@ -67,6 +69,7 @@ public class EmployeeController : ControllerBase
      * yang ada dengan melakukan penarikan data berdasarkan atribut yang ada pada calss DTO dengan operator Explicit.
      */
     [HttpGet]
+    [Authorize(Roles = "Staff, Administrator")]
     public IActionResult GetAll()
     {
         var result = _employeeRepository.GetAll();
@@ -86,6 +89,7 @@ public class EmployeeController : ControllerBase
      * function untuk get datanya berdsarkan Guid yang nantinya data tersebut di tampilkan sesuai atribut yang ada di class Dto.
      */
     [HttpGet("{guid}")]
+    [Authorize(Roles = "Staff, Administrator")]
     public IActionResult GetByGuid(Guid guid)
     {
         var result = _employeeRepository.GetByGuid(guid);
@@ -105,6 +109,7 @@ public class EmployeeController : ControllerBase
      * sehingga data yang di perlukan saat input akan di batasi sesuai keperluanya.
      */
     [HttpPost]
+    [Authorize(Roles = "Staff, Administrator")]
     public IActionResult Create(CreatedEmployeeDto employeeDto)
     {
         try
@@ -166,6 +171,7 @@ public class EmployeeController : ControllerBase
     }
     //Pada bagian delete dia memelukan Guid saja untuk melakukan penghapusan data.
     [HttpDelete("{guid}")]
+    [Authorize(Roles = "Staff, Administrator")]
     public IActionResult Delete(Guid guid)
     {
         try

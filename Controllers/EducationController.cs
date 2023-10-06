@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Server.Contracts;
 using Server.DTOs.Educations;
 using Server.Models;
@@ -9,6 +10,7 @@ using System.Net;
 
 namespace Server.Controllers;
 [ApiController]
+[Authorize(Roles = "Staff, Administrator")]
 [Route("server/[controller]")]
 public class EducationController : ControllerBase
 {
@@ -88,6 +90,7 @@ public class EducationController : ControllerBase
      * Lalu data akan masuk kedalam function yang tersedia pada interface update sesuai isi dari variable update yang telah di masukan.
      */
     [HttpPut]
+    [Authorize(Roles = "Staff, Administrator, Clinet")]
     public IActionResult Update(EducationDto educationDto)
     {
         try

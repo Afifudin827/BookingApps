@@ -10,5 +10,10 @@ public class RoleRepository : GaneralRepository<Role>, IRoleRepository
         //karena kita sudah membuat general class repository jadi kita hanya perlu melakukan pewarisan ke setiap repository class yang lainnya.
     }
 
+    public Guid? GetGuidByName()
+    {
+        return _context.Set<Role>().FirstOrDefault(r => r.Name == "Client")?.Guid;
+    }
+
 }
     

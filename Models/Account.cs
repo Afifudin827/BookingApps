@@ -19,7 +19,7 @@ public class Account : GaneralModel
     public DateTime ExpiredTime { get; set; }
 
     public Employee? Employee { get; set; }
-    public AccountRole? AccountRole { get; set; }
+    public ICollection<AccountRole>? AccountRole { get; set; }
 }
 /*
  * Pada bagian model account akan memiliki beberapa atribut di antaranya 

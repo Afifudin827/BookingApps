@@ -1,4 +1,5 @@
 ﻿using BookingApps.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Contracts;
 using Server.DTOs.AccountRoles;
@@ -10,6 +11,7 @@ using System.Net;
 namespace Server.Controllers;
 
 [ApiController]
+[Authorize(Roles = "Staff, Administrator")]
 [Route("server/[controller]")]
 public class AccountRoleController : ControllerBase
 {

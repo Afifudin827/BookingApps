@@ -1,18 +1,19 @@
 ﻿using BookingApps.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Contracts;
 using Server.DTOs.Accounts;
-using Server.DTOs.Educations;
-using Server.DTOs.Univesities;
 using Server.Models;
 using Server.Utilities.Handler;
 using Server.Utilities.Hashing;
 using System.Net;
+using System.Security.Claims;
 using System.Transactions;
 
 namespace Server.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("server/[controller]")]
 public class AccountController : ControllerBase
 {
@@ -20,12 +21,20 @@ public class AccountController : ControllerBase
     private readonly IEmployeeRepository _employeeRepository;
     private readonly IEducationRepository _educationRepository;
     private readonly IUniversityRepository _universityRepository;
-    public AccountController(IAccountRepository accountRepository, IEmployeeRepository employeeRepository, IEducationRepository educationRepository, IUniversityRepository universityRepository)
+    private readonly IEmailHandler _emailHandler;
+    private readonly ITokenHendler _tokenHendler;
+    private readonly IRoleRepository _roleRepository;
+    private readonly IAccountRoleRepository _accountRoleRepository;
+    public AccountController(IAccountRepository accountRepository, IEmployeeRepository employeeRepository, IEducationRepository educationRepository, IUniversityRepository universityRepository, IEmailHandler emailHandler, ITokenHendler tokenHendler, IRoleRepository roleRepository, IAccountRoleRepository accountRoleRepository)
     {
         _accountRepository = accountRepository;
         _employeeRepository = employeeRepository;
         _educationRepository = educationRepository;
         _universityRepository = universityRepository;
+        _emailHandler = emailHandler;
+        _tokenHendler = tokenHendler;
+        _roleRepository = roleRepository;
+        _accountRoleRepository = accountRoleRepository;
     }
 
     /*
@@ -34,6 +43,7 @@ public class AccountController : ControllerBase
      */
 
     [HttpPut("ForgetPassword")]
+    [AllowAnonymous]
     public IActionResult ForgetPassword(string email)
     {
         var employee = _employeeRepository.GetAll();
@@ -69,6 +79,7 @@ public class AccountController : ControllerBase
                          OTP = acc.OTP,
                          ExpiredDate = acc.ExpiredTime
                      };
+        _emailHandler.SendEmail("Forget Password", $"Your OTP Is {update.OTP}", email);
         return Ok(new ResponseOKHandler<IEnumerable<ForgetPasswordDto>>(result));
 
     }
@@ -148,6 +159,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("Registration")]
+    [AllowAnonymous]
     public IActionResult Registration(RegistrationDto registrationDto)
     {
         try
@@ -177,7 +189,15 @@ public class AccountController : ControllerBase
                 Account toCreateAcc = registrationDto;
                 toCreateAcc.Guid = resultEmp.Guid;
                 toCreateAcc.Password = HashHandler.generatePassword(registrationDto.ConfirmPassword);
-                var resultAcc = _accountRepository.Create(toCreateAcc);
+                _accountRepository.Create(toCreateAcc);
+
+                Guid? roleGuid = _roleRepository.GetGuidByName();
+                AccountRole toCreateAccRole = registrationDto;
+                toCreateAccRole.AccountGuid = resultEmp.Guid;
+                toCreateAccRole.RoleGuid = roleGuid.GetValueOrDefault();
+
+                _accountRoleRepository.Create(toCreateAccRole);
+                
 
                 transaction.Complete();
 
@@ -197,19 +217,9 @@ public class AccountController : ControllerBase
         }
     }
     [HttpGet("Login")]
+    [AllowAnonymous]
     public IActionResult Login(string Email, string Password)
     {
-        var employee = _employeeRepository.GetAll();
-        var account = _accountRepository.GetAll();
-        if (!(employee.Any() && account.Any()))
-        {
-            return NotFound(new ResponseErrorHandler
-            {
-                Code = StatusCodes.Status404NotFound,
-                Status = HttpStatusCode.NotFound.ToString(),
-                Message = "Data Not Found"
-            });            
-        }
         var data = _employeeRepository.GetByEmail(Email);
         if (data is null)
         {
@@ -230,9 +240,26 @@ public class AccountController : ControllerBase
                 Message = "Wrong Password"
             });
         }
-        return Ok(new ResponseOKHandler<string>("Login Success"));
+        var claims = new List<Claim>();
+        claims.Add(new Claim("Email",  data.Email));
+        claims.Add(new Claim("FullName",  string.Concat(data.FirstName, " ", data.LastName )));
+
+        var getRoles = from ar in _accountRoleRepository.GetAll()
+                       join r in _roleRepository.GetAll() on ar.RoleGuid equals r.Guid
+                       where ar.AccountGuid == data.Guid
+                       select r.Name;
+       
+        foreach(var CollectName in getRoles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, CollectName));
+        }
+
+        var generateToken = _tokenHendler.Generate(claims); 
+
+        return Ok(new ResponseOKHandler<object>("Login Success", new {Token = generateToken}));
     }
     [HttpGet]
+    [Authorize(Roles = "Staff, Administrator")]
     public IActionResult GetAll()
     {
         var result = _accountRepository.GetAll();
@@ -252,6 +279,7 @@ public class AccountController : ControllerBase
      * function untuk get datanya berdsarkan Guid yang nantinya data tersebut di tampilkan sesuai atribut yang ada di class Dto.
      */
     [HttpGet("{guid}")]
+    
     public IActionResult GetByGuid(Guid guid)
     {
         var result = _accountRepository.GetByGuid(guid);
@@ -271,6 +299,7 @@ public class AccountController : ControllerBase
      * sehingga data yang di perlukan saat input akan di batasi sesuai keperluanya.
      */
     [HttpPost]
+
     public IActionResult Create(CreateAccountDto accountDto)
     {
         try
@@ -334,6 +363,7 @@ public class AccountController : ControllerBase
     }
     //Pada bagian delete dia memelukan Guid saja untuk melakukan penghapusan data.
     [HttpDelete("{guid}")]
+    [Authorize(Roles = "Staff, Administrator")]
     public IActionResult Delete(Guid guid)
     {
         try

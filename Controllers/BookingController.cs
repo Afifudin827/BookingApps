@@ -1,4 +1,5 @@
 ﻿using BookingApps.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Contracts;
 using Server.DTOs.Bookings;
@@ -12,6 +13,7 @@ namespace Server.Controllers;
 
 [ApiController]
 [Route("server/[controller]")]
+[Authorize]
 public class BookingController : ControllerBase
 {
     private readonly IBookingRepository _bookingRepository;

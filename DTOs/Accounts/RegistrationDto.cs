@@ -76,4 +76,14 @@ public class RegistrationDto
             ModifiedDate = DateTime.Now
         };
     }
+    public static implicit operator AccountRole(RegistrationDto registrationDto) {
+        return new AccountRole
+        {
+            Guid = Guid.NewGuid() ,
+            AccountGuid = Guid.NewGuid(),
+            RoleGuid = Guid.NewGuid(),
+            CreatedDate = DateTime.Now,
+            ModifiedDate = DateTime.Now
+        };
+    }
 }

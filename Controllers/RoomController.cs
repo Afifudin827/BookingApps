@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Server.Contracts;
 using Server.DTOs.Rooms;
 using Server.DTOs.Univesities;
@@ -11,6 +12,7 @@ using System.Net;
 namespace Server.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("server/[controller]")]
 public class RoomController : ControllerBase
 {

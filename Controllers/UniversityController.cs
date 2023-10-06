@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Server.Contracts;
 using Server.DTOs.Employees;
 using Server.DTOs.Univesities;
@@ -9,6 +10,7 @@ using System.Net;
 namespace Server.Controllers;
 
 [ApiController]
+[Authorize(Roles = "Staff, Administrator")]
 [Route("server/[controller]")]
 public class UniversityController : ControllerBase
 {
@@ -23,6 +25,7 @@ public class UniversityController : ControllerBase
      * yang ada dengan melakukan penarikan data berdasarkan atribut yang ada pada calss DTO dengan operator Explicit.
      */
     [HttpGet]
+    [Authorize(Roles = "Staff, Administrator, Client")]
     public IActionResult GetAll()
     {
         var result = _universityRepository.GetAll();
@@ -42,6 +45,7 @@ public class UniversityController : ControllerBase
      * function untuk get datanya berdsarkan Guid yang nantinya data tersebut di tampilkan sesuai atribut yang ada di class Dto.
      */
     [HttpGet("{guid}")]
+    [Authorize(Roles = "Staff, Administrator, Client")]
     public IActionResult GetByGuid(Guid guid)
     {
         var result = _universityRepository.GetByGuid(guid);
@@ -65,6 +69,7 @@ public class UniversityController : ControllerBase
      * Lalu data akan masuk kedalam function yang tersedia pada interface update sesuai isi dari variable update yang telah di masukan.
      */
     [HttpPut]
+    [Authorize(Roles = "Staff, Administrator, Client")]
     public IActionResult Update(UniversityDto universityDto)
     {
         try

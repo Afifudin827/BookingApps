@@ -68,8 +68,8 @@ public class BookingManagementDbContext : DbContext
 
         modelBuilder.Entity<AccountRole>()
                     .HasOne(ar => ar.Account)
-                    .WithOne(a => a.AccountRole)
-                    .HasForeignKey<AccountRole>(ar => ar.AccountGuid);
+                    .WithMany(a => a.AccountRole)
+                    .HasForeignKey(ar => ar.AccountGuid);
 
         modelBuilder.Entity<Role>()
                     .HasMany(ar => ar.AccountRole)
