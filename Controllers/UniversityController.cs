@@ -9,6 +9,7 @@ using System.Net;
 
 namespace Server.Controllers;
 
+//melakuakan method di bawah ini hanya bisa di lakukan oleh staff dan administrator
 [ApiController]
 [Authorize(Roles = "Staff, Administrator")]
 [Route("server/[controller]")]

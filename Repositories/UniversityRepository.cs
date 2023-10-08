@@ -10,6 +10,8 @@ public class UniversityRepository : GaneralRepository<University>, IUniversityRe
         //karena kita sudah membuat general class repository jadi kita hanya perlu melakukan pewarisan ke setiap repository class yang lainnya.
         
     }
+
+    //mendapatkan data code dan name dari univercity jika data kosong nantinya akan di oleh pada controler
     public University GetByCodeAndName(string code, string name)
     {
         var entity = _context.Set<University>().FirstOrDefault(e => e.Name == name && e.Code == code);

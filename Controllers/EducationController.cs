@@ -9,6 +9,8 @@ using System;
 using System.Net;
 
 namespace Server.Controllers;
+
+//menambahkan authorize hanya admin dan staff yang dapat mengelola sebagian besar method ini
 [ApiController]
 [Authorize(Roles = "Staff, Administrator")]
 [Route("server/[controller]")]

@@ -12,7 +12,7 @@ public class Room : GaneralModel
     [Column("capacity")]
     public int Capacity { get; set; }
 
-    public Booking? Booking { get; set; }
+    public ICollection<Booking>? Booking { get; set; }
 
     /*
      * Pada model room memiliki beberapa atribut di antaranya 

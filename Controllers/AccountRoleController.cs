@@ -10,6 +10,7 @@ using System.Net;
 
 namespace Server.Controllers;
 
+//keseluruhan method ini di awali dengan semua yang ada disni hanya dapat digunakan oleh role staff dan administrator
 [ApiController]
 [Authorize(Roles = "Staff, Administrator")]
 [Route("server/[controller]")]
@@ -25,6 +26,8 @@ public class AccountRoleController : ControllerBase
      * Pada class Controller memiliki function untuk get all data 
      * yang ada dengan melakukan penarikan data berdasarkan atribut yang ada pada calss DTO dengan operator Explicit.
      */
+
+    //melakuakan method di bawah ini hanya bisa di lakukan oleh staff dan administrator
     [HttpGet]
     public IActionResult GetAll()
     {
@@ -44,6 +47,8 @@ public class AccountRoleController : ControllerBase
     /*
      * function untuk get datanya berdsarkan Guid yang nantinya data tersebut di tampilkan sesuai atribut yang ada di class Dto.
      */
+
+    //melakuakan method di bawah ini hanya bisa di lakukan oleh staff dan administrator
     [HttpGet("{guid}")]
     public IActionResult GetByGuid(Guid guid)
     {
@@ -63,6 +68,8 @@ public class AccountRoleController : ControllerBase
      * bagian post akan membuat data baru dengan memanfaatkan class Dto 
      * sehingga data yang di perlukan saat input akan di batasi sesuai keperluanya.
      */
+
+    //melakuakan method di bawah ini hanya bisa di lakukan oleh staff dan administrator
     [HttpPost]
     public IActionResult Create(CreatedAccountRoleDto accountRoleDto)
     {
@@ -90,6 +97,8 @@ public class AccountRoleController : ControllerBase
      * memasukan data hasil pencarian createdDate kedalam model update agar data created tidak berubah. 
      * Lalu data akan masuk kedalam function yang tersedia pada interface update sesuai isi dari variable update yang telah di masukan.
      */
+
+    //melakuakan method di bawah ini hanya bisa di lakukan oleh staff dan administrator
     [HttpPut]
     public IActionResult Update(AccountRoleDto accountRoleDto)
     {
@@ -122,6 +131,7 @@ public class AccountRoleController : ControllerBase
         }
         
     }
+    //melakuakan method di bawah ini hanya bisa di lakukan oleh staff dan administrator
     ////Pada bagian delete dia memelukan Guid saja untuk melakukan penghapusan data.
     [HttpDelete("{guid}")]
     public IActionResult Delete(Guid guid)

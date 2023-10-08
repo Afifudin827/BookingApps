@@ -16,12 +16,14 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+//menambahkan service builder untuk mengirimkan email
 builder.Services.AddTransient<IEmailHandler, EmailHendler>(_ => new EmailHendler(
     builder.Configuration["SmtpServices:Server"],
     int.Parse(builder.Configuration["SmtpServices:Port"]),
     builder.Configuration["SmtpServices:FromEmailAddress"]
     ));
 
+//menambahkan service scope untuk menambahkan token pada saat authenticaton
 builder.Services.AddScoped<ITokenHendler, TokenHendler>();
 /*
  * Kemudian pada bagian program menambahkan scoped untuk setiap Interface table dan 
@@ -35,10 +37,11 @@ builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IAccountRoleRepository, AccountRoleRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
-
+//menambahkan service dari fluent untuk validasi inputan yang di berikan kepada server
 builder.Services.AddFluentValidationAutoValidation()
     .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
+//builder JWT yang berfungsi sebagai authenticaion pada saat pengguna ingin mengakses method method yang ada pada program
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -56,6 +59,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+//menambahkan custom validation respon saat error validasi terjadi
 builder.Services.AddControllers()
        .ConfigureApiBehaviorOptions(options =>
        {
@@ -80,6 +84,7 @@ builder.Services.AddDbContext<BookingManagementDbContext>(Options => Options.Use
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+//menambahkan dan memperbarui tampilan yang ada pada swagger
 builder.Services.AddSwaggerGen(x => {
     x.SwaggerDoc("v1", new OpenApiInfo
     {
@@ -112,6 +117,7 @@ builder.Services.AddSwaggerGen(x => {
     });
 });
 
+//menambahkan policy terhadap server apa saja yang di perbolehkan pada saat mengakses server
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
@@ -133,6 +139,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+//app akan memerlukan autehticaion pada saat di jalankan atau menggunakan method yang ada pada server
 app.UseAuthentication();
 
 app.UseAuthorization();

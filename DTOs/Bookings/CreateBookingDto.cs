@@ -18,7 +18,7 @@ public class CreateBookingDto
     {
         return new Booking
         {
-            StartDate = bookingDto.StartDate, 
+            StartDate =  bookingDto.StartDate, 
             EndDate = bookingDto.EndDate, 
             Status = bookingDto.Status, 
             Remarks = bookingDto.Remarks,

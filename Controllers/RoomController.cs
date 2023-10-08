@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using BookingApps.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Contracts;
+using Server.DTOs.Bookings;
 using Server.DTOs.Rooms;
 using Server.DTOs.Univesities;
 using Server.Models;
@@ -10,21 +12,81 @@ using System;
 using System.Net;
 
 namespace Server.Controllers;
-
+//melakuakan method di bawah ini hanya bisa di lakukan oleh staff dan administrator
 [ApiController]
 [Authorize]
 [Route("server/[controller]")]
 public class RoomController : ControllerBase
 {
     private readonly IRoomRepository _roomRepository;
-    public RoomController(IRoomRepository roomRepository)
+    private readonly IBookingRepository _bookingRepository;
+    public RoomController(IRoomRepository roomRepository, IBookingRepository bookingRepository)
     {
         _roomRepository = roomRepository;
+        _bookingRepository = bookingRepository;
     }
     /*
      * Pada class Controller memiliki function untuk get all data 
      * yang ada dengan melakukan penarikan data berdasarkan atribut yang ada pada calss DTO dengan operator Explicit.
      */
+    //mendapatkan data room yang sedang idle atau kosong
+    [HttpGet("GetRoomIdle")]
+    public IActionResult GetRoomIdle()
+    {
+        var room = _roomRepository.GetAll();
+        var bookings = _bookingRepository.GetAll();
+
+        if (!(bookings.Any() && room.Any()))
+        {
+            return NotFound(new ResponseErrorHandler
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "No Room Is Empty"
+            });
+        }
+
+        var result = from roo in room
+                     join boo in bookings on roo.Guid equals boo.RoomGuid into joinedBookings
+                     from boo in joinedBookings.DefaultIfEmpty()
+                     where boo == null || DateTime.Now < boo.StartDate && DateTime.Now > boo.EndDate
+                     select new RoomIdleDto
+                     {
+                         RoomGuid = roo.Guid,
+                         RoomName = roo.Name,
+                         Floor = roo.Floor,
+                         capacity = roo.Capacity
+                     };
+
+        return Ok(new ResponseOKHandler<IEnumerable<RoomIdleDto>>(result));
+    }
+
+    //mendaptkan data ruangan yang sudah di booking atau berapa lama di booking
+    [HttpGet("GetRoomBookedLength")]
+    public IActionResult GetRoomBookedLength()
+    {
+        var room = _roomRepository.GetAll();
+        var bookings = _bookingRepository.GetAll();
+        if (!room.Any())
+        {
+            return NotFound(new ResponseErrorHandler
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "No Room Is Empty"
+            });
+        }
+
+        var result = from roo in room
+                     join boo in bookings on roo.Guid equals boo.RoomGuid
+                     select new RoomBookedLengthDto
+                     {
+                         RoomGuid = roo.Guid,
+                         RoomName = roo.Name,
+                         BookedLength = CalculateBookingLength(boo.StartDate, boo.EndDate)
+                     };
+        return Ok(new ResponseOKHandler<IEnumerable<RoomBookedLengthDto>>(result));
+    }
     [HttpGet]
     public IActionResult GetAll()
     {
@@ -150,4 +212,23 @@ public class RoomController : ControllerBase
             });
         }
     }
+
+    public static int CalculateBookingLength(DateTime startDate, DateTime endDate)
+    {
+        int totalDays = (endDate - startDate).Days;
+        int weekendDays = 0;
+
+        for (int i = 0; i < totalDays; i++)
+        {
+            DateTime currentDate = startDate.AddDays(i);
+            if (currentDate.DayOfWeek == DayOfWeek.Saturday || currentDate.DayOfWeek == DayOfWeek.Sunday)
+            {
+                weekendDays++;
+            }
+        }
+        int weekDays = totalDays - weekendDays;
+        return weekDays;
+    }
 }
+
+

@@ -5,11 +5,12 @@ namespace Server.Utilities.Handler;
 
 public class EmailHendler : IEmailHandler
 {
+    //membuat email handler yang nantinya digunakan untuk mengirim email ke tujuan
     private string _server;
     private int _port;
     private string _fromEmailAddress;
 
-
+    //membuat constructor pemanggilan EmailHandler
     public EmailHendler(string server, int port, string fromEmailAddress)
     {
         _server = server;
@@ -17,6 +18,7 @@ public class EmailHendler : IEmailHandler
         _fromEmailAddress = fromEmailAddress;
     }
 
+    //saat pengiriman email dapay memanggil metodh di bawah ini
     public void SendEmail(string subject, string body, string toEmail)
     {
         var message = new MailMessage()

@@ -13,6 +13,7 @@ public class TokenHendler : ITokenHendler
     {
         _configuration = configuration;
     }
+    //dihunakan untuk menggenerate token pada saat login nantinya, yang hanya menampung 5 menit
     public string Generate(IEnumerable<Claim> claims)
     {
         var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWTServices:SecretKey"]));

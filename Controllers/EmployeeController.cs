@@ -9,12 +9,13 @@ using System;
 using System.Net;
 
 namespace Server.Controllers;
-
+//melakuakan method di bawah ini hanya bisa di lakukan oleh akun yang ter authentication
 [ApiController]
 [Authorize]
 [Route("server/[controller]")]
 public class EmployeeController : ControllerBase
 {
+    //menambahkan repositori agar mendampatkan data yang relevan
     private readonly IEmployeeRepository _employeeRepository;
     private readonly IEducationRepository _educationRepository;
     private readonly IUniversityRepository _universityRepository;
@@ -26,7 +27,9 @@ public class EmployeeController : ControllerBase
         _universityRepository = universityRepository;
     }
 
+    //mendapatkan detail data employee yang hanya dapat lakukan oleh admin dan staff
     [HttpGet("Detail")]
+    [Authorize(Roles = "Staff, Administrator")]
     public IActionResult GetDetail()
     {
         var employee = _employeeRepository.GetAll();
@@ -43,6 +46,7 @@ public class EmployeeController : ControllerBase
             });
         }
 
+        //melakukan join pada tabel yang di tampilkan
         var result = from emp in employee
                      join edu in education on emp.Guid equals edu.Guid
                      join uni in univercity on edu.UniversityGuid equals uni.Guid

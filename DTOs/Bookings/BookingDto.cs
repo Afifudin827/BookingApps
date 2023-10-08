@@ -18,6 +18,8 @@ public class BookingDto
         return new Booking
         {
             Guid = bookingDto.Guid,
+            StartDate = bookingDto.StartDate,
+            EndDate = bookingDto.EndDate,
             Status = bookingDto.Status,
             Remarks = bookingDto.Remarks,
             RoomGuid = bookingDto.RoomGuid,
@@ -31,6 +33,8 @@ public class BookingDto
         return new BookingDto
         {
             Guid = booking.Guid,
+            StartDate = booking.StartDate,
+            EndDate = booking.EndDate,
             Status = booking.Status,
             Remarks = booking.Remarks,
             RoomGuid = booking.RoomGuid,

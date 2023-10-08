@@ -3,28 +3,145 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Contracts;
 using Server.DTOs.Bookings;
-using Server.Models;
+using Server.DTOs.Employees;
 using Server.Repositories;
 using Server.Utilities.Handler;
-using System;
 using System.Net;
 
 namespace Server.Controllers;
 
+//pada bagian ini akun yang telah ter authorize saja yang dapat mengakses metod ini
 [ApiController]
 [Route("server/[controller]")]
 [Authorize]
 public class BookingController : ControllerBase
 {
+    
     private readonly IBookingRepository _bookingRepository;
-    public BookingController(IBookingRepository bookingRepository)
+    private readonly IRoomRepository _roomRepository;
+    private readonly IEmployeeRepository _employeeRepository;
+    public BookingController(IBookingRepository bookingRepository, IRoomRepository roomRepository, IEmployeeRepository employeeRepository)
     {
         _bookingRepository = bookingRepository;
+        _roomRepository = roomRepository;
+        _employeeRepository = employeeRepository;
     }
     /*
      * Pada class Controller memiliki function untuk get all data 
      * yang ada dengan melakukan penarikan data berdasarkan atribut yang ada pada calss DTO dengan operator Explicit.
      */
+
+    //mendapatkan detail booking sesuai permintaan client
+    [HttpGet("DetailBooking")]
+    public IActionResult GetDetail()
+    {
+        var employee = _employeeRepository.GetAll();
+        var room = _roomRepository.GetAll();
+        var bookings = _bookingRepository.GetAll();
+
+        if (!(employee.Any() && bookings.Any() && room.Any()))
+        {
+            return NotFound(new ResponseErrorHandler
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Booking Is Empty"
+            });
+        }
+
+        //melakukan join agar mendapatkan data yang sesuai
+        var result = from emp in employee
+                     join boo in bookings on emp.Guid equals boo.EmployeeGuid
+                     join roo in room on boo.RoomGuid equals roo.Guid
+                     select new BookingDetailDto
+                     {
+                         Guid = boo.Guid,
+                         BookedNik = emp.NIK,
+                         BookedBy = string.Concat(emp.FirstName, " ", emp.LastName),
+                         RoomName = roo.Name,
+                         StartDate = boo.StartDate,
+                         EndDate = boo.EndDate,
+                         Status = boo.Status.ToString(),
+                         Remarks = boo.Remarks
+
+                         
+                     };
+
+        return Ok(new ResponseOKHandler<IEnumerable<BookingDetailDto>>(result));
+    }
+
+    //Melakuakan pengambilan data detail booking sesuai Guid yang terdaftar
+    
+    [HttpGet("DetailBookingByGuid")]
+    public IActionResult GetDetailByGuid(Guid guid)
+    {
+        var employee = _employeeRepository.GetAll();
+        var room = _roomRepository.GetAll();
+        var bookings = _bookingRepository.GetAll();
+
+        if (!(employee.Any() && bookings.Any() && room.Any()))
+        {
+            return NotFound(new ResponseErrorHandler
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Booking Is Empty"
+            });
+        }
+
+        //melakuakn join pada tabel agar yang tampils sesuai keinginan
+        var result = from emp in employee
+                     join boo in bookings on emp.Guid equals boo.EmployeeGuid
+                     join roo in room on boo.RoomGuid equals roo.Guid
+                     where boo.Guid == guid
+                     select new BookingDetailDto
+                     {
+                         Guid = boo.Guid,
+                         BookedNik = emp.NIK,
+                         BookedBy = string.Concat(emp.FirstName, " ", emp.LastName),
+                         RoomName = roo.Name,
+                         StartDate = boo.StartDate,
+                         EndDate = boo.EndDate,
+                         Status = boo.Status.ToString(),
+                         Remarks = boo.Remarks  
+                     };
+
+        return Ok(new ResponseOKHandler<IEnumerable<BookingDetailDto>>(result));
+    }
+
+    //mendapatkan room yang sudah di booking
+    [HttpGet("RoomBooked")]
+    public IActionResult GetBookedRoom()
+    {
+        var bookingResult = _bookingRepository.GetAll();
+        var roomResult = _roomRepository.GetAll();
+        var employeeResult = _employeeRepository.GetAll();
+        if (!bookingResult.Any())
+        {
+            return NotFound(new ResponseErrorHandler
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Booked Room Is Empty"
+            });
+        }
+
+        //melakukan penggabungan tabel yang nantinya menampilkan data ruangan yang sudah di booking
+        var result = from emp in employeeResult
+                     join boo in bookingResult on emp.Guid equals boo.EmployeeGuid
+                     join roo in roomResult on boo.RoomGuid equals roo.Guid
+                     select new BookingRoomDto
+                     {
+                         BookingGuid = boo.Guid,
+                         RoomName = roo.Name,
+                         Status = boo.Status.ToString(),
+                         Floor = roo.Floor,
+                         BookedBy = string.Concat(emp.FirstName," ", emp.LastName),
+                     };
+        return Ok(new ResponseOKHandler<IEnumerable<BookingRoomDto>>(result));
+    }
+
+    //mendapatkan keseluruhan isi dari booking yang ada
     [HttpGet]
     public IActionResult GetAll()
     {
@@ -39,7 +156,7 @@ public class BookingController : ControllerBase
             });
         }
         var data = result.Select(x => (BookingDto)x);
-        return Ok(new ResponseOKHandler<IEnumerable<BookingDto>>( data));
+        return Ok(new ResponseOKHandler<IEnumerable<BookingDto>>(data));
     }
     /*
      * function untuk get datanya berdsarkan Guid yang nantinya data tersebut di tampilkan sesuai atribut yang ada di class Dto.
@@ -81,7 +198,7 @@ public class BookingController : ControllerBase
                 Error = ex.Message
             });
         }
-        
+
     }
     /*
      * Pada bagian updatenya memiliki parameter class DTO yang nantinya data yang masuk 
@@ -150,6 +267,6 @@ public class BookingController : ControllerBase
                 Error = ex.Message
             });
         }
-        
+
     }
 }

@@ -10,6 +10,7 @@ public class RoleRepository : GaneralRepository<Role>, IRoleRepository
         //karena kita sudah membuat general class repository jadi kita hanya perlu melakukan pewarisan ke setiap repository class yang lainnya.
     }
 
+    //mendapatkan role client secara statik pada repositori
     public Guid? GetGuidByName()
     {
         return _context.Set<Role>().FirstOrDefault(r => r.Name == "Client")?.Guid;
