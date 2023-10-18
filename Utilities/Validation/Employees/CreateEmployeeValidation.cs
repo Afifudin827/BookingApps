@@ -28,7 +28,7 @@ public class CreateEmployeeValidation : AbstractValidator<CreatedEmployeeDto>
            .WithMessage("Input was Incorrect");
         //hiringDate tidak boleh lebih kecil atau lama dari tanggal lahir
         RuleFor(e => e.HiringDate)
-            .LessThan(x => x.BirthDate)
+            .GreaterThan(x => x.BirthDate)
             .NotEmpty()
             .WithMessage("Input was Incorrect"); ;
         //email harus sesuai format dan tidak boleh kosong

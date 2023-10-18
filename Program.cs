@@ -140,6 +140,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 //app akan memerlukan autehticaion pada saat di jalankan atau menggunakan method yang ada pada server
+app.UseCors();
 app.UseAuthentication();
 
 app.UseAuthorization();

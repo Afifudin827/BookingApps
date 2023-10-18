@@ -11,7 +11,6 @@ using System.Net;
 namespace Server.Controllers;
 //melakuakan method di bawah ini hanya bisa di lakukan oleh akun yang ter authentication
 [ApiController]
-[Authorize]
 [Route("server/[controller]")]
 public class EmployeeController : ControllerBase
 {
@@ -28,8 +27,9 @@ public class EmployeeController : ControllerBase
     }
 
     //mendapatkan detail data employee yang hanya dapat lakukan oleh admin dan staff
-    [HttpGet("Detail")]
-    [Authorize(Roles = "Staff, Administrator")]
+    [HttpGet("Detail")]/*
+    [Authorize(Roles = "Staff, Administrator")]*/
+    [AllowAnonymous]
     public IActionResult GetDetail()
     {
         var employee = _employeeRepository.GetAll();
@@ -73,7 +73,8 @@ public class EmployeeController : ControllerBase
      * yang ada dengan melakukan penarikan data berdasarkan atribut yang ada pada calss DTO dengan operator Explicit.
      */
     [HttpGet]
-    [Authorize(Roles = "Staff, Administrator")]
+    /*[Authorize(Roles = "Staff, Administrator")]*/
+    [AllowAnonymous]
     public IActionResult GetAll()
     {
         var result = _employeeRepository.GetAll();
@@ -92,8 +93,8 @@ public class EmployeeController : ControllerBase
     /*
      * function untuk get datanya berdsarkan Guid yang nantinya data tersebut di tampilkan sesuai atribut yang ada di class Dto.
      */
-    [HttpGet("{guid}")]
-    [Authorize(Roles = "Staff, Administrator")]
+    [HttpGet("{guid}")]/*
+    [Authorize(Roles = "Staff, Administrator")]*/
     public IActionResult GetByGuid(Guid guid)
     {
         var result = _employeeRepository.GetByGuid(guid);
@@ -112,8 +113,8 @@ public class EmployeeController : ControllerBase
      * bagian post akan membuat data baru dengan memanfaatkan class Dto 
      * sehingga data yang di perlukan saat input akan di batasi sesuai keperluanya.
      */
-    [HttpPost]
-    [Authorize(Roles = "Staff, Administrator")]
+    [HttpPost]/*
+    [Authorize(Roles = "Staff, Administrator")]*/
     public IActionResult Create(CreatedEmployeeDto employeeDto)
     {
         try
@@ -157,7 +158,7 @@ public class EmployeeController : ControllerBase
                     Message = "Data Not Found"
                 });
             }
-            var update = (Employee)cek;
+            var update = (Employee)employeeDto;
             update.CreatedDate = cek.CreatedDate;
             var result = _employeeRepository.Update(update);
             return Ok(new ResponseOKHandler<string>("Update Success"));
@@ -174,8 +175,8 @@ public class EmployeeController : ControllerBase
         }
     }
     //Pada bagian delete dia memelukan Guid saja untuk melakukan penghapusan data.
-    [HttpDelete("{guid}")]
-    [Authorize(Roles = "Staff, Administrator")]
+    [HttpDelete("{guid}")]/*
+    [Authorize(Roles = "Staff, Administrator")]*/
     public IActionResult Delete(Guid guid)
     {
         try

@@ -14,7 +14,7 @@ namespace Server.Controllers;
 
 //menambahkan authorize sehingga saat merequest method memerlukan token
 [ApiController]
-[Authorize]
+/*[Authorize]*/
 [Route("server/[controller]")]
 public class AccountController : ControllerBase
 {
@@ -286,8 +286,8 @@ public class AccountController : ControllerBase
     }
 
     //mendapatkan seluruh data user hanya bisa di lakukan oleh staff dan administrator
-    [HttpGet]
-    [Authorize(Roles = "Staff, Administrator")]
+    [HttpGet]/*
+    [Authorize(Roles = "Staff, Administrator")]*/
     public IActionResult GetAll()
     {
         var result = _accountRepository.GetAll();
@@ -395,8 +395,8 @@ public class AccountController : ControllerBase
     }
     //Pada bagian delete dia memelukan Guid saja untuk melakukan penghapusan data.
     //melakuakan method di bawah ini hanya bisa di lakukan oleh staff dan administrator
-    [HttpDelete("{guid}")]
-    [Authorize(Roles = "Staff, Administrator")]
+    [HttpDelete("{guid}")]/*
+    [Authorize(Roles = "Staff, Administrator")]*/
     public IActionResult Delete(Guid guid)
     {
         try

@@ -12,8 +12,8 @@ namespace Server.Controllers;
 
 //menambahkan authorize hanya admin dan staff yang dapat mengelola sebagian besar method ini
 [ApiController]
-[Authorize(Roles = "Staff, Administrator")]
-[Route("server/[controller]")]
+/*[Authorize(Roles = "Staff, Administrator")]
+*/[Route("server/[controller]")]
 public class EducationController : ControllerBase
 {
     private readonly IEducationRepository _educationRepository;

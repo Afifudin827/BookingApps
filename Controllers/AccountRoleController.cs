@@ -11,8 +11,8 @@ using System.Net;
 namespace Server.Controllers;
 
 //keseluruhan method ini di awali dengan semua yang ada disni hanya dapat digunakan oleh role staff dan administrator
-[ApiController]
-[Authorize(Roles = "Staff, Administrator")]
+[ApiController]/*
+[Authorize(Roles = "Staff, Administrator")]*/
 [Route("server/[controller]")]
 public class AccountRoleController : ControllerBase
 {
@@ -139,6 +139,37 @@ public class AccountRoleController : ControllerBase
         try
         {
             var results = _accountRoleRepository.GetByGuid(guid);
+            if (results is null)
+            {
+                return NotFound(new ResponseErrorHandler
+                {
+                    Code = StatusCodes.Status404NotFound,
+                    Status = HttpStatusCode.NotFound.ToString(),
+                    Message = "Data Not Found"
+                });
+            }
+            var result = _accountRoleRepository.Delete(results);
+            return Ok(new ResponseOKHandler<string>("Success Deleted Data"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new ResponseErrorHandler
+            {
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Failed to Deleted data",
+                Error = ex.Message
+            });
+        }
+        
+    }
+    
+    [HttpDelete("guidAccount")]
+    public IActionResult DeleteByGuidAccount(Guid guid)
+    {
+        try
+        {
+            var results = _accountRoleRepository.GetByGuidAccount(guid);
             if (results is null)
             {
                 return NotFound(new ResponseErrorHandler

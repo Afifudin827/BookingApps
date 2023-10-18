@@ -13,7 +13,4 @@ public class AccountRepository : GaneralRepository<Account>, IAccountRepository
     {
         //karena kita sudah membuat general class repository jadi kita hanya perlu melakukan pewarisan ke setiap repository class yang lainnya.
     }
-
-    
-
 }

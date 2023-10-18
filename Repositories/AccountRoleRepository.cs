@@ -10,5 +10,10 @@ public class AccountRoleRepository : GaneralRepository<AccountRole>, IAccountRol
     {
         //karena kita sudah membuat general class repository jadi kita hanya perlu melakukan pewarisan ke setiap repository class yang lainnya.
     }
-
+    public AccountRole? GetByGuidAccount(Guid guid)
+    {
+        var entity = _context.Set<AccountRole>().FirstOrDefault(e => e.AccountGuid == guid);
+        _context.ChangeTracker.Clear();
+        return entity;
+    }
 }
